@@ -1,0 +1,22 @@
+http:
+  routers:
+    apiServer:
+      rule: Host(`{{ env "DOMAIN" }}`) && PathPrefix(`/api`)
+      service: api-service
+      entryPoints:
+        - http
+        - https
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - redirect-to-https
+  middlewares:
+    redirect-to-https:
+      redirectScheme:
+        scheme: https
+        permanent: true
+  services:
+    api-service:
+      loadBalancer:
+        servers:
+          - url: "http://localhost:3000"
